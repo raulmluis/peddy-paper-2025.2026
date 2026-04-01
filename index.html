@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <title>Checkpoint Final</title>
+  <style>
+    body {
+      background-color: #0f172a;
+      color: #e2e8f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      text-align: center;
+    }
+    .box {
+      background: #1e293b;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+    input {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 10px;
+      width: 200px;
+    }
+    button {
+      padding: 10px 15px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      background: #38bdf8;
+      color: black;
+      cursor: pointer;
+    }
+    .hidden {
+      display: none;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="box">
+  <h2>Em que ano foi fundada a FMUP?</h2>
+  <input type="text" id="password" placeholder="Password">
+  <br>
+  <button onclick="checkPassword()">Entrar</button>
+
+  <div id="result" class="hidden">
+    <p>Vai ter a estas coordenadas: <b>41.13723738118251, -8.609208661295579</b></p>
+    <p>Junta-te ao encontro. O último desafio estará à tua espera.</p>
+  </div>
+
+  <p id="error" style="color:red;"></p>
+</div>
+
+<script>
+  function checkPassword() {
+    var input = document.getElementById("password").value.toLowerCase().trim();
+
+    if (input === "1825") {
+      document.getElementById("result").classList.remove("hidden");
+      document.getElementById("error").innerText = "";
+    } else {
+      document.getElementById("error").innerText = "Password errada 😬";
+    }
+  }
+</script>
+
+</body>
+</html>
