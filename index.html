@@ -2,7 +2,7 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <title>Checkpoint Final</title>
+  <title>Peddy Paper FMUP</title>
   <style>
     body {
       background-color: #0f172a;
@@ -20,17 +20,11 @@
       padding: 30px;
       border-radius: 12px;
       box-shadow: 0 0 20px rgba(0,0,0,0.5);
-    }
-    input {
-      padding: 10px;
-      border-radius: 8px;
-      border: none;
-      margin-top: 10px;
-      width: 200px;
+      width: 350px;
     }
     button {
       padding: 10px 15px;
-      margin-top: 10px;
+      margin-top: 15px;
       border: none;
       border-radius: 8px;
       background: #38bdf8;
@@ -39,27 +33,124 @@
     }
     .hidden {
       display: none;
-      margin-top: 20px;
+    }
+    input {
+      margin-top: 10px;
+    }
+    .progress {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #94a3b8;
     }
   </style>
 </head>
 <body>
 
 <div class="box">
-  <h2>Em que ano foi fundada a FMUP?</h2>
-  <input type="text" id="password" placeholder="Password">
+  <h2 id="title"></h2>
+  <p id="mission"></p>
+
+  <div class="progress" id="progress"></div>
+  
+  <label>
+    <input type="checkbox" id="check"> Missão concluída
+  </label>
   <br>
-  <button onclick="checkPassword()">Entrar</button>
+  <button onclick="nextStep()">Próximo</button>
 
-  <div id="result" class="hidden">
-    <p>Vai ter a estas coordenadas: <b>41.13723738118251, -8.609208661295579</b></p>
-    <p>Junta-te ao encontro. O último desafio estará à tua espera.</p>
+  <div id="final" class="hidden">
+    <h2>Checkpoint Final</h2>
+    <p>Em que ano foi fundada a FMUP?</p>
+    <input type="text" id="password" placeholder="Password">
+    <br>
+    <button onclick="checkPassword()">Entrar</button>
+
+    <div id="result" class="hidden">
+      <p>Coordenadas: <b>41.13723738118251, -8.609208661295579</b></p>
+      <p>Último desafio desbloqueado 👀</p>
+    </div>
+
+    <p id="error" style="color:red;"></p>
   </div>
-
-  <p id="error" style="color:red;"></p>
 </div>
 
 <script>
+  var defaultSteps = [
+    { title: "ICBAS", mission: "Postar story no insta de foto de grupo à frente do ICBAS a marcar @medicina_uporto" },
+    { title: "Baixa do Porto", mission: "Pedir uma mensagem a um comerciante para dizer no final" },
+    { title: "Palácio da Bolsa", mission: "Resolver palavras cruzadas académicas" },
+    { title: "Clérigos / Fonte dos Leões", mission: "Fazer um FRA completo com capa improvisada" },
+    { title: "Aliados", mission: "Tirar foto com um turista" },
+    { title: "Sé do Porto", mission: "Responder a 5 perguntas académicas" }
+  ];
+
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  var steps;
+
+  // Criar ID único por equipa/dispositivo
+  function getDeviceId() {
+    let id = localStorage.getItem("deviceId");
+    if (!id) {
+      id = Math.random().toString(36).substring(2, 10);
+      localStorage.setItem("deviceId", id);
+    }
+    return id;
+  }
+
+  const deviceId = getDeviceId();
+
+  // Cada dispositivo tem a sua própria ordem e progresso
+  if (!localStorage.getItem("steps_" + deviceId)) {
+    steps = [...defaultSteps];
+    shuffle(steps);
+    localStorage.setItem("steps_" + deviceId, JSON.stringify(steps));
+    localStorage.setItem("current_" + deviceId, 0);
+  } else {
+    steps = JSON.parse(localStorage.getItem("steps_" + deviceId));
+  }
+
+  var current = parseInt(localStorage.getItem("current_" + deviceId)) || 0;
+
+  function render() {
+    if (current < steps.length) {
+      document.getElementById("title").innerText = steps[current].title;
+      document.getElementById("mission").innerText = steps[current].mission;
+      document.getElementById("progress").innerText = `Local ${current + 1} de ${steps.length}`;
+    }
+  }
+
+  render();
+
+  function nextStep() {
+    var check = document.getElementById("check");
+
+    if (!check.checked) {
+      alert("Tens de completar o objetivo primeiro");
+      return;
+    }
+
+    current++;
+    localStorage.setItem("current_" + deviceId, current);
+    check.checked = false;
+
+    if (current < steps.length) {
+      render();
+    } else {
+      document.getElementById("title").classList.add("hidden");
+      document.getElementById("mission").classList.add("hidden");
+      document.getElementById("progress").classList.add("hidden");
+      check.parentElement.classList.add("hidden");
+      document.querySelector("button").classList.add("hidden");
+      document.getElementById("final").classList.remove("hidden");
+    }
+  }
+
   function checkPassword() {
     var input = document.getElementById("password").value.toLowerCase().trim();
 
@@ -67,7 +158,7 @@
       document.getElementById("result").classList.remove("hidden");
       document.getElementById("error").innerText = "";
     } else {
-      document.getElementById("error").innerText = "Password errada 😬";
+      document.getElementById("error").innerText = "Password errada";
     }
   }
 </script>
