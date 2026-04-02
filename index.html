@@ -117,13 +117,26 @@
 
   var current = parseInt(localStorage.getItem("current_" + deviceId)) || 0;
 
+// evitar valores bugados
+if (current > steps.length) {
+  current = steps.length;
+}
+
   function render() {
-    if (current < steps.length) {
-      document.getElementById("title").innerText = steps[current].title;
-      document.getElementById("mission").innerText = steps[current].mission;
-      document.getElementById("progress").innerText = `Local ${current + 1} de ${steps.length}`;
-    }
+  if (current < steps.length) {
+    document.getElementById("title").innerText = steps[current].title;
+    document.getElementById("mission").innerText = steps[current].mission;
+    document.getElementById("progress").innerText = `Local ${current + 1} de ${steps.length}`;
+  } else {
+    // já terminou → mostrar final direto
+    document.getElementById("title").classList.add("hidden");
+    document.getElementById("mission").classList.add("hidden");
+    document.getElementById("progress").classList.add("hidden");
+    document.getElementById("check").parentElement.classList.add("hidden");
+    document.querySelector("button").classList.add("hidden");
+    document.getElementById("final").classList.remove("hidden");
   }
+}
 
   render();
 
